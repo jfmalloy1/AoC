@@ -38,30 +38,41 @@ end
 #Find all bags holding a shiny gold bag directly
 all_holders = search_bags(rule_dict, "shiny gold")
 
-#Find all bags holding a shiny gold bag direct holders via iteration
-# all_holders = shiny_holders
-let flag = 1
-    while flag == 1
-        start_size = length(unique(all_holders))
-        for bag in all_holders
-            append!(all_holders, search_bags(rule_dict, bag[1:end-1]))
-        end
-        length(unique(all_holders)) == start_size && (flag = 0)
-    end
-end
-println("There are ", length(unique(all_holders)), " possible bags")
-
-#Part 2 Attempt (I'll come back, maybe)
-# function count_bags(rule_dict, bag)
-#     if bag ∉ keys(rule_dict)
-#         return []
-#     end
-#     for inner_bag in rule_dict[bag]
-#         println(inner_bag)
+# #Find all bags holding a shiny gold bag direct holders via iteration
+# # all_holders = shiny_holders
+# let flag = 1
+#     while flag == 1
+#         start_size = length(unique(all_holders))
+#         for bag in all_holders
+#             append!(all_holders, search_bags(rule_dict, bag[1:end-1]))
+#         end
+#         length(unique(all_holders)) == start_size && (flag = 0)
 #     end
 # end
-#
-# count_bags(rule_dict, "dull gold")
+# println("There are ", length(unique(all_holders)), " possible bags")
+
+#Part 2
+function count_bags(rule_dict, bag)
+    if bag ∉ keys(rule_dict)
+        return 1
+    end
+
+    let count = 0
+        for inner_bag in rule_dict[bag]
+            for (k, v) in inner_bag
+                if k in keys(rule_dict)
+                    count += v
+                end
+                count += v*count_bags(rule_dict, k)
+                #println(count)
+            end
+        end
+        return count
+    end
+end
+
+#println(rule_dict["dark olive"])
+println(count_bags(rule_dict, "shiny gold"))
 #
 # # let flag = 1
 # #     while flag == 1
